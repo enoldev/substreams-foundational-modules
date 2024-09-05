@@ -34,11 +34,18 @@ modules:
     doc: |
       `blocks_without_votes` allows you to consume a full Solana Block without Vote instructions (`Vote111111111111111111111111111111111111111`).
       If you consume it on HISTORICAL data (+1000 blocks from HEAD), you will be reading from the StreamingFast cache, thus saving costs on the amount of TB read.
+   
+  - name: all_transactions
+    kind: map
+    inputs:
+      - map: blocks_without_votes
+    output:
+      type: proto:sol.transactions.v1.Transactions
 
   - name: all_instructions
     kind: map
     inputs:
-      - map: all_transactions_without_votes
+      - map: all_transactions
     output:
       type: proto:sol.instructions.v1.Instructions
 

@@ -35,6 +35,32 @@ modules:
       `blocks_without_votes` allows you to consume a full Solana Block without Vote instructions (`Vote111111111111111111111111111111111111111`).
       If you consume it on HISTORICAL data (+1000 blocks from HEAD), you will be reading from the StreamingFast cache, thus saving costs on the amount of TB read.
 
+  - name: all_instructions
+    kind: map
+    inputs:
+      - map: all_transactions_without_votes
+    output:
+      type: proto:sol.instructions.v1.Instructions
+
+  - name: index_instructions
+    kind: blockIndex
+    inputs:
+      - map: all_instructions
+    output:
+      type: proto:sf.substreams.index.v1.Keys
+
+  - name: filtered_instructions
+    kind: map
+    blockFilter:
+      module: index_instructions
+      query:
+        params: true
+    inputs:
+      - params: string
+      - map: all_instructions
+    output:
+      type: proto:sol.instructions.v1.Instructions
+
   - name: program_ids_without_votes
     kind: blockIndex
     inputs:
@@ -65,3 +91,4 @@ modules:
 
 params: # Default parameters for the filter modules. You can override these parameters based on your needs.
   filtered_transactions_without_votes: "program:TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+  filtered_instructions: "program:TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
